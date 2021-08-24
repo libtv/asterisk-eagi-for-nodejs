@@ -1,0 +1,18 @@
+{
+    "name": "agi-bin",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ari-client": "^2.2.0",
+        "ding-dong": "^0.1.7",
+        "lodash": "^4.17.21",
+        "web-audio-api": "^0.2.2"
+    }
+}
