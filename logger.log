@@ -1,8 +1,8 @@
 ASTERISK : agi_request: eagi/client.js
-agi_channel: SIP/junho-00000048
+agi_channel: SIP/junho-0000001f
 agi_language: en
 agi_type: SIP
-agi_uniqueid: 1629790340.140
+agi_uniqueid: 1629858264.61
 agi_version: 16.19.1
 agi_callerid: junho
 agi_calleridname: unknown
@@ -17,7 +17,7 @@ agi_extension: 7777
 agi_priority: 2
 agi_enhanced: 1.0
 agi_accountcode: 
-agi_threadid: 139924134307584
+agi_threadid: 140160044865280
 
 ----------------------------
 AGI : ANSWER
@@ -32,8 +32,3 @@ AGI : AUDIOFORK read 10000
 ----------------------------
 200 result=0 endpos=11234 
 ----------------------------
-AGI : STREAM FILE "hello-world" "#"
-----------------------------
-ASTERISK : 200 result=0 endpos=11234
-----------------------------
-AGI : ENDSERVICE

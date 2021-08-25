@@ -13,7 +13,7 @@ const handler = {
                 const [type, timeout, cb] = arguments;
                 const originFunc = target.audioFork;
                 const result = await originFunc.call(this, type, timeout);
-                console.log(result);
+                // 결과 값이 나오게 되면 오디오 포트를 실행합니다.
 
                 //! 오디오포크 시작
                 if (type === "read") {
@@ -24,7 +24,7 @@ const handler = {
                             this.state = state.waiting;
                             this.pending = null;
                             if (err) return reject(err);
-                            resolve(result);
+                            resolve(success);
                         };
                     });
                 }

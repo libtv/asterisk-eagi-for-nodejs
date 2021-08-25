@@ -8,12 +8,18 @@ const handler = (context) => {
         await context.answer();
         await context.streamFile("hello-world");
 
-        const c = await context.audioFork("read", 10000, (res, client) => {
+        const c = await context.audioFork("read", 10000, async (res, client) => {
             file.write(res);
         });
         console.log(c);
         await context.streamFile("hello-world");
-        await context.end();
+        const d = await context.audioFork("read", 10000, (res, client) => {
+            file.write(res);
+        });
+        console.log(d);
+        await context.streamFile("hello-world");
+        const e = await context.end();
+        console.log(e);
     });
 };
 

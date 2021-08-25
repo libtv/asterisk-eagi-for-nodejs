@@ -2,7 +2,6 @@ import fs, { read } from "fs";
 import { wavify } from "./wavity.js";
 import { AudioContext } from "web-audio-api";
 const logger = fs.createWriteStream("/var/lib/asterisk/agi-bin/eagi/wavity/logger.log");
-var file = fs.createWriteStream("/var/lib/asterisk/agi-bin/test2.raw");
 var contextList = new Map();
 
 function WavityContext(ip, port) {
@@ -36,7 +35,6 @@ WavityContext.prototype.streamContext = function (reader) {
                 }
                 buffer = chunk.buffer;
                 let createbuffer = wavify(buffer, numberOfChannels, sampleRate);
-                file.write(chunk);
 
                 context.decodeAudioData(
                     createbuffer,

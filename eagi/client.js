@@ -57,6 +57,8 @@ class AGISocket extends EventEmitter {
         this.audio = new net.Socket({ fd: 3, writable: true });
         this.stop = (timeout) => {
             var variable = setTimeout(() => {
+                this.msg = "";
+                this.stop_var = null;
                 this.audio.unpipe(this.socket);
                 this.state = state.waiting;
                 this.callback.write(success);
@@ -90,9 +92,10 @@ class AGISocket extends EventEmitter {
             if (this.msg.includes(success)) {
                 this.msg = "";
                 clearTimeout(this.stop_var);
+                this.stop_var = null;
                 this.audio.unpipe(this.socket);
                 this.state = state.waiting;
-                this.callback.write(success);
+                return this.callback.write(success);
             }
         }
     }
@@ -121,6 +124,9 @@ class AGISocket extends EventEmitter {
             this.audio.pipe(this.socket);
             var context = createContext("127.0.0.1", "3000");
             context.streamContext(this.audio).then((value) => {
+                clearTimeout(this.stop_var);
+                this.stop_var = null;
+                this.msg = "";
                 this.audio.unpipe(this.socket);
                 this.state = state.waiting;
                 this.callback.write(success);

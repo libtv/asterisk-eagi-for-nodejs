@@ -48,9 +48,11 @@ Context.prototype.read = function () {
     var buffer = this.stream.read();
     if (this.state === state.reading) {
         if (buffer != null && buffer.includes(success)) {
-            return this.successCallback(null, "success");
+            var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(success);
+            var result = this.lineSplit(parsed);
+            return this.successCallback(null, result);
         }
-        this.pending(Buffer.from(buffer, "latin1"), this);
+        if (buffer != null) this.pending(Buffer.from(buffer, "latin1"), this);
     }
     if (!buffer) return this.msg;
 
@@ -89,23 +91,29 @@ Context.prototype.readResponse = function (msg) {
     }, this);
 };
 
+Context.prototype.lineSplit = function (parsed_line) {
+    var response = {
+        code: parseInt(parsed_line[1]),
+        result: parsed_line[2].trim(),
+    };
+    if (parsed_line[3]) {
+        response.value = parsed_line[3];
+    }
+
+    return response;
+};
+
 Context.prototype.readResponseLine = function (line) {
     if (!line) return;
 
-    //var parsed = /^(\d{3})(?: result=)(.*)/.exec(line);
     var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(line);
 
     if (!parsed) {
         return this.emit("hangup");
     }
 
-    var response = {
-        code: parseInt(parsed[1]),
-        result: parsed[2].trim(),
-    };
-    if (parsed[3]) {
-        response.value = parsed[3];
-    }
+    var self = this;
+    var response = self.lineSplit(parsed);
 
     //our last command had a pending callback
     if (this.pending) {
@@ -128,7 +136,10 @@ Context.prototype.send = function (msg, cb) {
 Context.prototype.end = async function () {
     await this.stream.write("ENDSERVICE\n");
     this.stream.end();
-    return Promise.resolve();
+    var self = this;
+    var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(success);
+    var response = self.lineSplit(parsed);
+    return Promise.resolve(response);
 };
 
 Context.prototype.sendCommand = function (command) {
