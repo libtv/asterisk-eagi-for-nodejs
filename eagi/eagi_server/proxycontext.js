@@ -1,8 +1,8 @@
-import { state } from "./state.js";
+const state = require("./state.js");
 
 const success = "200 result=0 endpos=11234 \n";
 
-export const proxyContext = (context) => {
+module.exports = (context) => {
     return new Proxy(context, handler);
 };
 

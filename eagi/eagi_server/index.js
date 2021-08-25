@@ -1,8 +1,8 @@
-import { Context } from "./context.js";
-import { proxyContext } from "./proxycontext.js";
-import net from "net";
+const Context = require("./context.js");
+const proxyContext = require("./proxycontext.js");
+const net = require("net");
 
-export const agi = function (handler, optionsIn) {
+const agi = function (handler, optionsIn) {
     var server;
     var options = optionsIn || {};
 
@@ -29,3 +29,5 @@ export const agi = function (handler, optionsIn) {
         start: start,
     };
 };
+
+module.exports = agi;

@@ -1,6 +1,6 @@
-import { concat } from "./concat.js";
+const concat = require("./concat.js");
 
-export const wavify = (data, numberOfChannels, sampleRate) => {
+module.exports = (data, numberOfChannels, sampleRate) => {
     const header = new ArrayBuffer(44);
     var d = new DataView(header);
     d.setUint8(0, "R".charCodeAt(0));

@@ -1,6 +1,7 @@
-import fs, { read } from "fs";
-import { wavify } from "./wavity.js";
-import { AudioContext } from "web-audio-api";
+const fs = require("fs");
+const wavify = require("./wavity.js");
+const AudioContext = require("web-audio-api");
+
 const logger = fs.createWriteStream("/var/lib/asterisk/agi-bin/eagi/wavity/logger.log");
 var contextList = new Map();
 
@@ -62,7 +63,7 @@ WavityContext.prototype.streamContext = function (reader) {
     });
 };
 
-export const createContext = (ip, port) => {
+module.exports = (ip, port) => {
     var key = ip + port;
     if (contextList.has(key)) {
         return contextList.get(key);

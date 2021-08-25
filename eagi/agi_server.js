@@ -1,5 +1,5 @@
-import { agi } from "./eagi_server/index.js";
-import fs from "fs";
+const agi = require("./eagi_server/index.js");
+const fs = require("fs");
 
 const handler = (context) => {
     context.onEvent("variables").then(async (vars) => {

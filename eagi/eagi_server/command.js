@@ -1,4 +1,4 @@
-export const commands = [
+const commands = [
     {
         name: "exec",
         command: "EXEC",
@@ -358,3 +358,5 @@ export const commands = [
         params: 2,
     },
 ];
+
+module.exports = commands;

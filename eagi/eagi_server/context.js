@@ -1,14 +1,13 @@
-import Readable from "readable-stream";
-import util from "util";
-import { EventEmitter } from "events";
-import { state } from "./state.js";
-import { commands } from "./command.js";
-import fs from "fs";
+const Readable = require("readable-stream");
+const util = require("util");
+const EventEmitter = require("events").EventEmitter;
+const state = require("./state.js");
+const commands = require("./command.js");
 
 //base context
 const success = "200 result=0 endpos=11234 \n";
 
-export const Context = function (stream, loggerOptions = {}) {
+const Context = function (stream, loggerOptions = {}) {
     EventEmitter.call(this);
 
     function consoleDecorator(arrow, data) {
@@ -203,3 +202,5 @@ var prepareArgs = function (args, argsRules, count) {
 Context.prototype.dial = function (target, timeout, params) {
     return this.exec("Dial", target + "," + timeout + "," + params);
 };
+
+module.exports = Context;

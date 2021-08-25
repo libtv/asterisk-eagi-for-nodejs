@@ -1,10 +1,10 @@
 #! usr/bin/env node
 //* import
-import fs, { read } from "fs";
-import net from "net";
-import { state } from "./state.js";
-import { EventEmitter } from "events";
-import { createContext } from "./wavity/index.js";
+const fs = require("fs");
+const net = require("net");
+const state = require("./state.js");
+const EventEmitter = require("events").EventEmitter;
+const createContext = require("./wavity/index.js");
 
 //* variable
 const logger = fs.createWriteStream("/var/lib/asterisk/agi-bin/logger.log");
