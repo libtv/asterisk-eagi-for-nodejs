@@ -10,8 +10,11 @@
     "license": "ISC",
     "dependencies": {
         "ari-client": "^2.2.0",
+        "axios": "^0.21.1",
         "ding-dong": "^0.1.7",
+        "fetch": "^1.1.0",
         "lodash": "^4.17.21",
-        "web-audio-api": "^0.2.2"
+        "wav": "^1.0.2",
+        "wavefile": "^11.0.0"
     }
 }

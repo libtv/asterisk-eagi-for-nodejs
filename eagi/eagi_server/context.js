@@ -5,7 +5,7 @@ const state = require("./state.js");
 const commands = require("./command.js");
 
 //base context
-const success = "200 result=0 endpos=11234 \n";
+const success = "200 result=0 AUDIOFORK SUCCESS \n";
 
 const Context = function (stream, loggerOptions = {}) {
     EventEmitter.call(this);
@@ -16,10 +16,9 @@ const Context = function (stream, loggerOptions = {}) {
     this.log = loggerOptions.logger ? loggerOptions.logger : consoleDecorator;
 
     this.debug = loggerOptions.debug;
-    this.stream = new Readable();
-    // this.stream.setEncoding("utf8");
-    this.stream.wrap(stream);
+    this.stream = stream;
     this.state = state.init;
+    this.successCallback = null;
 
     this.msg = "";
     this.variables = {};
@@ -27,11 +26,8 @@ const Context = function (stream, loggerOptions = {}) {
 
     var self = this;
     this.stream.on("readable", function () {
-        //always keep the 'leftover' part of the message
         self.read();
     });
-    this.buffers = new Readable();
-    this.buffers._read = function () {};
 
     this.stream.on("error", this.emit.bind(this, "error"));
     this.stream.on("close", this.emit.bind(this, "close"));
@@ -39,19 +35,24 @@ const Context = function (stream, loggerOptions = {}) {
 
 util.inherits(Context, EventEmitter);
 
-Context.prototype.stop = function () {
-    this.stream.write(success);
-};
-
 Context.prototype.read = function () {
     var buffer = this.stream.read();
     if (this.state === state.reading) {
         if (buffer != null && buffer.includes(success)) {
-            var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(success);
-            var result = this.lineSplit(parsed);
-            return this.successCallback(null, result);
+            buffer = null;
+            this.msg = "";
+            console.log("audiofork 끝남");
+            return this.successCallback(null, success);
+        } else if (buffer != null && buffer.includes("result")) {
+            buffer = null;
+            this.msg = "";
+            return;
+        } else if (buffer != null) {
+            this.pending(Buffer.from(buffer, "latin1"));
+            buffer = null;
+            this.msg = "";
+            return;
         }
-        if (buffer != null) this.pending(Buffer.from(buffer, "latin1"), this);
     }
     if (!buffer) return this.msg;
 
@@ -69,6 +70,7 @@ Context.prototype.read = function () {
 };
 
 Context.prototype.readVariables = function (msg) {
+    this.msg = "";
     var lines = msg.split("\n");
 
     lines.map(function (line) {
@@ -83,6 +85,7 @@ Context.prototype.readVariables = function (msg) {
 };
 
 Context.prototype.readResponse = function (msg) {
+    this.msg = "";
     var lines = msg.split("\n");
 
     lines.map(function (line) {
@@ -130,10 +133,11 @@ Context.prototype.setState = function (state) {
 Context.prototype.send = function (msg, cb) {
     this.pending = cb;
     this.stream.write(msg);
+    console.log(`context.js -> client.js : ${msg}`);
 };
 
 Context.prototype.end = async function () {
-    await this.stream.write("ENDSERVICE\n");
+    this.stream.write("ENDSERVICE\n");
     this.stream.end();
     var self = this;
     var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(success);

@@ -1,8 +1,8 @@
-const Context = require("./context.js");
-const proxyContext = require("./proxycontext.js");
-const net = require("net");
+var Context = require("./context.js");
+var proxyContext = require("./proxycontext.js");
+var net = require("net");
 
-const agi = function (handler, optionsIn) {
+var agi = function (handler, optionsIn) {
     var server;
     var options = optionsIn || {};
 
