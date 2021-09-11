@@ -1,10 +1,8 @@
-const Readable = require("readable-stream");
 const util = require("util");
 const EventEmitter = require("events").EventEmitter;
 const state = require("./state.js");
 const commands = require("./command.js");
 
-//base context
 const success = "200 result=0 AUDIOFORK SUCCESS \n";
 
 const Context = function (stream, loggerOptions = {}) {
@@ -39,10 +37,11 @@ Context.prototype.read = function () {
     var buffer = this.stream.read();
     if (this.state === state.reading) {
         if (buffer != null && buffer.includes(success)) {
+            var parsed = /^(\d{3})(?: result=)([^(]*)(?:\((.*)\))?/.exec(success);
+            var result = this.lineSplit(parsed);
             buffer = null;
             this.msg = "";
-            console.log("audiofork 끝남");
-            return this.successCallback(null, success);
+            return this.successCallback(null, result);
         } else if (buffer != null && buffer.includes("result")) {
             buffer = null;
             this.msg = "";
@@ -133,7 +132,6 @@ Context.prototype.setState = function (state) {
 Context.prototype.send = function (msg, cb) {
     this.pending = cb;
     this.stream.write(msg);
-    console.log(`context.js -> client.js : ${msg}`);
 };
 
 Context.prototype.end = async function () {

@@ -107,16 +107,15 @@ class AGISocket extends EventEmitter {
         if (type === "read") {
             this.callback.changeState(state.reading);
 
-            this.context
-                .streamContext(this.socket, timeout)
-                .then(() => {})
-                .catch(() => {})
-                .then(() => {
-                    this.callback.changeState(state.waiting);
-                    this.msg = "";
-                    this.context.stop();
-                    this.callback.write(audioforkSuccess);
-                });
+            try {
+                await this.context.streamContext(this.socket, timeout);
+            } catch (err) {
+            } finally {
+                this.callback.changeState(state.waiting);
+                this.msg = "";
+                this.context.stop();
+                this.callback.write(audioforkSuccess);
+            }
         }
     }
 }
