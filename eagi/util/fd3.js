@@ -14,7 +14,7 @@ function FileDescription3(ip, port) {
     self.reader = null;
     self.writable = null;
     self.saveBuffer = Buffer.alloc(1000);
-    self.saveBufferLength = 3000; /* 3000 : 0.15sec 8000 : 1.0sec */
+    self.saveBufferLength = 8000; /* 3000 : 0.15sec 8000 : 1.0sec */
     self.maxCount = 10;
     self.count = 0;
     self.lowSpeak = 0.0;
