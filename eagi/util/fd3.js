@@ -1,8 +1,8 @@
 //! Variables
+const fs = require("fs");
 // const file = fs.createWriteStream("/var/lib/asterisk/agi-bin/hello.log"); // TODO 필요할떄 알아서 쓰세요
 var contextList = new Map();
 var contextCount = 0;
-const fs = require("fs");
 
 //! Function
 function FileDescription3(ip, port) {
@@ -14,6 +14,7 @@ function FileDescription3(ip, port) {
     self.reader = null;
     self.writable = null;
     self.saveBuffer = Buffer.alloc(1000);
+    self.saveBufferLength = 3000; /* 3000 : 0.15sec 8000 : 1.0sec */
     self.maxCount = 10;
     self.count = 0;
     self.lowSpeak = 0.0;
@@ -79,7 +80,7 @@ FileDescription3.prototype.streamContext = function (writable, timeout) {
                 var isBuffer = "byteLength" in data;
                 if (data == null || isBuffer == false) {
                     return;
-                } else if (Number(length) < 1000 && Number(length) >= 1 && length % 2 === 0) {
+                } else if (Number(length) < 1000 && Number(length) >= 1 /* && length % 2 === 0 */) {
                     hello(data);
                 } else {
                     return;
@@ -93,7 +94,7 @@ FileDescription3.prototype.streamContext = function (writable, timeout) {
             countIncrease(max);
             // file.write(`Say Status : ${self.say} | Max Value : ${max} | LowSpeak Value : ${self.lowSpeak} \n`); // TODO 필요할떄 알아서 쓰세요
 
-            let speakMinimum = +self.lowSpeak + 0.1;
+            let speakMinimum = +self.lowSpeak + 0.05;
 
             //* 말을 지금 하는 상태 */
             if (donotSayState() && max > speakMinimum) {
@@ -105,18 +106,18 @@ FileDescription3.prototype.streamContext = function (writable, timeout) {
             }
 
             //* 말을 안하는 상태 */
-            if (donotSayState()) {
+            else if (donotSayState()) {
                 self.saveBuffer = Buffer.concat([self.saveBuffer, chunk]);
 
-                if (self.saveBuffer.length > 1000) {
+                if (self.saveBuffer.length > self.saveBufferLength) {
                     var length = self.saveBuffer.length;
-                    self.saveBuffer.slice(length - 1000, length);
+                    self.saveBuffer = self.saveBuffer.slice(length - self.saveBufferLength, length);
                 }
                 return;
             }
 
             //* 말을 한 상태 */
-            if (self.say === true) {
+            else if (doSayState()) {
                 /* 말을 한 상태에서 */
                 self.writable.write(chunk);
                 if (max <= speakMinimum) {
@@ -154,6 +155,10 @@ FileDescription3.prototype.streamContext = function (writable, timeout) {
 
         function donotSayState() {
             return self.say === false && self.count > self.maxCount;
+        }
+
+        function doSayState() {
+            return self.say === true && self.count > self.maxCount;
         }
     });
 };
