@@ -1,4 +1,4 @@
-//! Variables
+//! Variables - TEST KIM
 const fs = require("fs");
 // const file = fs.createWriteStream("/var/lib/asterisk/agi-bin/hello.log"); // TODO 필요할떄 알아서 쓰세요
 var contextList = new Map();
