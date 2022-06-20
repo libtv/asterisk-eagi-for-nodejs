@@ -55,9 +55,11 @@ FileDescription3.prototype.streamContext = function (writable, timeout) {
     self.writable = writable;
 
     return new Promise((resolve) => {
-        self.timeout = setTimeout(() => {
-            self.close = true;
-        }, timeout);
+        if (timeout != null) {
+            self.timeout = setTimeout(() => {
+                self.close = true;
+            }, timeout);
+        }
 
         self.reader.once("close", () => {
             resolve();
